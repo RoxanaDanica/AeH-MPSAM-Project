@@ -1,11 +1,16 @@
 <?php
-
 require_once __DIR__ . '/../app/config.php';
 
-echo "<h1>CONFIG OK</h1>";
+if (!isLoggedIn()) {
+    redirect(url('login.php'));
+}
 
-$result = isLoggedIn();
-
-echo "<h1>isLoggedIn() = ";
-var_dump($result);
-echo "</h1>";
+// Redirect către dashboard-ul corespunzător rolului
+$user = currentUser();
+if ($user['rol'] === 'medic') {
+    redirect(url('dashboard_medic.php'));
+} elseif ($user['rol'] === 'pacient') {
+    redirect(url('dashboard_pacient.php'));
+} else {
+    redirect(url('login.php'));
+}
