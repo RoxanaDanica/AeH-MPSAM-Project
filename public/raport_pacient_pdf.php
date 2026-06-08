@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/app/config.php';
+require_once __DIR__ . '/../app/config.php';
 requireRole('medic');
 
 $idPacient = (int)($_GET['id'] ?? 0);
