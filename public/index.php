@@ -1,7 +1,7 @@
 <?php
 
-// require_once __DIR__ . '/../app/config.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config.php';
+require_once __DIR__ . '/../app/config.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config.php';
 
 if (!isLoggedIn()) {
     redirect(url('login.php'));
