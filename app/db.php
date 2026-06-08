@@ -1,3 +1,5 @@
+<?php
+
 function db() {
     static $pdo = null;
 
@@ -31,4 +33,8 @@ function db() {
     } catch (PDOException $ex) {
         die("DB connection failed: " . $ex->getMessage());
     }
+}
+
+function isMockMode() {
+    return DATA_SOURCE === 'mock';
 }
