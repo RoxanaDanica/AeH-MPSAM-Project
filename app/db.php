@@ -14,7 +14,9 @@ function db() {
     try {
         $dsn = "sqlsrv:Server=tcp:" . AZURE_SQL_HOST . "," . AZURE_SQL_PORT .
                ";Database=" . AZURE_SQL_DATABASE .
-               ";Encrypt=true;TrustServerCertificate=true";
+               ";Encrypt=yes" .
+               ";TrustServerCertificate=no" .
+               ";Connection Timeout=5";
 
         $pdo = new PDO(
             $dsn,
@@ -24,14 +26,19 @@ function db() {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
+
+                PDO::ATTR_TIMEOUT => 5,
             ]
         );
 
-    } catch (PDOException $ex) {
-        die("DB ERROR: " . $ex->getMessage());
-    }
+        return $pdo;
 
-    return $pdo;
+    } catch (PDOException $ex) {
+
+        error_log("DB connection failed: " . $ex->getMessage());
+
+        die("Database connection failed. Please try again later.");
+    }
 }
 
 function isMockMode() {
