@@ -1,5 +1,3 @@
-<?php
-
 function db() {
     static $pdo = null;
 
@@ -12,9 +10,9 @@ function db() {
     }
 
     try {
-        $server = AZURE_SQL_HOST . "," . AZURE_SQL_PORT;
+        $server = AZURE_SQL_HOST;
 
-        $dsn = "sqlsrv:Server=$server;Database=" . AZURE_SQL_DATABASE . ";Encrypt=yes;TrustServerCertificate=no";
+        $dsn = "sqlsrv:Server=$server;Database=" . AZURE_SQL_DATABASE;
 
         $pdo = new PDO(
             $dsn,
@@ -24,7 +22,6 @@ function db() {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
-
                 PDO::ATTR_TIMEOUT => 5
             ]
         );
@@ -34,8 +31,4 @@ function db() {
     } catch (PDOException $ex) {
         die("DB connection failed: " . $ex->getMessage());
     }
-}
-
-function isMockMode() {
-    return DATA_SOURCE === 'mock';
 }
