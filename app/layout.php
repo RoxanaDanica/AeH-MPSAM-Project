@@ -17,11 +17,11 @@ function renderHeader($title = '', $activeMenu = '') {
     $GLOBALS['_page_title'] = $title;
     $GLOBALS['_active_menu'] = $activeMenu;
     
-    require_once __DIR__ . '/../includes/header.php';
+    include INCLUDES_PATH . '/header.php';
     
     // Sidebar afișat doar dacă utilizatorul e logat
     if (isLoggedIn()) {
-        require_once __DIR__ . '/../includes/sidebar.php';
+        include INCLUDES_PATH . '/sidebar.php';
     }
 }
 
@@ -29,7 +29,7 @@ function renderHeader($title = '', $activeMenu = '') {
  * Renderizează footer
  */
 function renderFooter() {
-    require_once __DIR__ . '/../includes/footer.php';
+    include INCLUDES_PATH . '/footer.php';
 }
 
 /**
