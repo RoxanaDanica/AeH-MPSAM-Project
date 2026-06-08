@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+define('CSRF_TOKEN_NAME', '_csrf_token');
 define('APP_NAME', 'Vital Cares');
 define('APP_VERSION', '1.0.0');
 
@@ -28,7 +29,7 @@ require_once APP_PATH . '/helpers.php';
 require_once APP_PATH . '/auth.php';
 require_once APP_PATH . '/guards.php';
 require_once APP_PATH . '/audit.php';
-require_once APP_PATH . '/layout.php';
+// require_once APP_PATH . '/layout.php';
 require_once APP_PATH . '/mailer.php';
 
 foreach (glob(APP_PATH . '/repositories/*.php') as $repoFile) {
