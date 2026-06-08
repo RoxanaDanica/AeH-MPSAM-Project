@@ -32,7 +32,12 @@ function logAction($userId, $action, $entity, $entityId = null, $details = '') {
         'timestamp' => date('Y-m-d H:i:s'),
     ];
     
-    AuditRepo::insert($entry);
+    try {
+        AuditRepo::insert($entry);
+    } catch (Throwable $e) {
+        // Do not break user flows if audit persistence is temporarily unavailable.
+        error_log('Audit logging failed: ' . $e->getMessage());
+    }
 }
 
 /**

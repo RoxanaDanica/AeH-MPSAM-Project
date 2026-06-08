@@ -20,7 +20,7 @@ if (is_file($file)) {
 
 $static = BASE_PATH . $uri;
 
-if (is_file($static)) {
+if (PHP_SAPI === 'cli-server' && is_file($static)) {
     return false;
 }
 

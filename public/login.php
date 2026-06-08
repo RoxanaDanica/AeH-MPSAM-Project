@@ -39,18 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $error = 'Completează email și parolă.';
     } else {
-        $user = login($email, $password);
-        if ($user) {
-            $redirectTo = $_SESSION['_redirect_after_login'] ?? null;
-            unset($_SESSION['_redirect_after_login']);
-            
-            if ($redirectTo) {
-                redirect($redirectTo);
+        try {
+            $user = login($email, $password);
+            if ($user) {
+                $redirectTo = $_SESSION['_redirect_after_login'] ?? null;
+                unset($_SESSION['_redirect_after_login']);
+                
+                if ($redirectTo) {
+                    redirect($redirectTo);
+                }
+                redirect(url('index.php'));
+            } else {
+                $error = 'Email sau parolă incorectă.';
+                logAction(null, 'LOGIN_FAILED', 'Utilizatori', null, 'Login eșuat pentru: ' . $email);
             }
-            redirect(url('index.php'));
-        } else {
-            $error = 'Email sau parolă incorectă.';
-            logAction(null, 'LOGIN_FAILED', 'Utilizatori', null, 'Login eșuat pentru: ' . $email);
+        } catch (Throwable $e) {
+            error_log('Login flow failed: ' . $e->getMessage());
+            $error = 'Serviciul de autentificare este temporar indisponibil. Reîncearcă în câteva momente.';
         }
     }
 }

@@ -5,7 +5,9 @@
  */
 
 // ── Sesiune ──
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // ── Constante aplicație ──
 define('APP_NAME', 'Vital Cares');
@@ -28,7 +30,9 @@ define('SESSION_TIMEOUT', 30 * 60); // 30 min (EuroRec GS002655.2)
 define('CSRF_TOKEN_NAME', '_token');
 
 // ── Path-uri ──
-define('BASE_PATH', dirname(__DIR__));
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', dirname(__DIR__));
+}
 define('APP_PATH', BASE_PATH . '/app');
 define('PUBLIC_PATH', BASE_PATH . '/public');
 define('INCLUDES_PATH', BASE_PATH . '/includes');
