@@ -23,11 +23,16 @@ jobs:
         with:
           php-version: '8.2'
 
+
+
       - name: Check if composer.json exists
         id: check_files
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v3
         with:
           files: 'composer.json'
+
+      - name: Make startup.sh executable
+        run: chmod +x startup.sh
 
       - name: Run composer install if composer.json exists
         if: steps.check_files.outputs.files_exists == 'true'
@@ -59,6 +64,17 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Configure app startup command
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            RG=$(az webapp list --query "[?name=='VitalCaresApp'].resourceGroup | [0]" -o tsv)
+            if [ -z "$RG" ]; then
+              echo "VitalCaresApp not found in subscription"
+              exit 1
+            fi
+            az webapp config set --resource-group "$RG" --name "VitalCaresApp" --startup-file "bash /home/site/wwwroot/startup.sh"
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
