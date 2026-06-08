@@ -18,6 +18,3 @@ fi
 # Apply custom nginx config
 cp /home/site/wwwroot/nginx-site.conf /etc/nginx/sites-enabled/default
 service nginx reload
-
-# Keep php-fpm in foreground as the container main process
-exec php-fpm
