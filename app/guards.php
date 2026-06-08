@@ -3,7 +3,7 @@
  * Funcții de protecție pagini
  * 
  * Folosire în pagini: pune AT THE TOP după include config:
- *   require_once __DIR__ . '/../app/config.php';
+ *   require_once __DIR__ . '/app/config.php';
  *   requireLogin();
  *   requireRole('medic');
  * 
