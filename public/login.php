@@ -1,6 +1,7 @@
 <?php
-// require_once __DIR__ . '/app/config.php';
-require_once __DIR__ . '/../app/config.php';
+
+// require_once __DIR__ . '/../app/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config.php';
 // Verificăm dacă utilizatorul a venit din link-ul de email cu cerere de delogare
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     
