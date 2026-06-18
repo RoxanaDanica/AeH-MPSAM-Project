@@ -17,14 +17,28 @@
  * Forțează utilizatorul să fie logat
  * Redirect la login dacă nu e autentificat
  */
+// function requireLogin() {
+//     if (!isLoggedIn()) {
+//         flash('warning', 'Trebuie să fii autentificat pentru a accesa această pagină.');
+//         $_SESSION['_redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? null;
+//         redirect(url('login.php'));
+//     }
+// }
 function requireLogin() {
+
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+    // EXCLUDE static files
+    if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico)$/', $uri)) {
+        return;
+    }
+
     if (!isLoggedIn()) {
         flash('warning', 'Trebuie să fii autentificat pentru a accesa această pagină.');
         $_SESSION['_redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? null;
         redirect(url('login.php'));
     }
 }
-
 /**
  * Forțează utilizatorul să aibă un anumit rol
  */
