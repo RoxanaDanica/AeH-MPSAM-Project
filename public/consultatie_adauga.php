@@ -1,13 +1,11 @@
 <?php
 require_once __DIR__ . '/../app/bootstrap.php';
-
 requireRole('medic');
 
 $idMedic = currentMedicId();
 $idPacientPreset = (int)($_GET['id_pacient'] ?? 0);
 $errors = [];
 
-// Lista pacienților medicului pentru dropdown
 $pacientiMedic = PacientRepo::findByMedic($idMedic);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = [
         'id_pacient' => $idPacient,
         'id_medic' => $idMedic,
-        'data_consultatie' => trim($_POST['data_consultatie'] ?? date('Y-m-d H:i:s')),
+        'data_consultatie' => str_replace('T', ' ', trim($_POST['data_consultatie'] ?? date('Y-m-d H:i:s'))),
         'motiv_prezentare' => trim($_POST['motiv_prezentare'] ?? ''),
         'simptome' => trim($_POST['simptome'] ?? ''),
         'diagnostic' => trim($_POST['diagnostic'] ?? ''),
@@ -40,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($newId) {
             logCurrentUserAction('CREATE', 'Consultatii', $newId, 
                 'Adăugare consultație pacient #' . $idPacient);
-            flash('success', 'Consultația a fost înregistrată.');
+            flash('success', 'Consultația a fost înregistrată. <a href="' . url('medicatie_adauga.php?id_pacient=' . $idPacient . '&id_consultatie=' . $newId) . '" style="text-decoration:underline;font-weight:bold;">Prescrie medicație pentru această consultație →</a>');
             redirect(url('consultatie_detalii.php?id=' . $newId));
         } else {
             flash('error', 'Eroare la salvare.');
@@ -51,7 +49,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 renderHeader('Consultație nouă', 'consultatii');
 renderFlash();
 
-$icdCodes = $GLOBALS['MOCK_ICD10'] ?? [];
+$icdCodes = [
+    'I10' => 'Hipertensiune esențială',
+    'I11.0' => 'Boală cardiacă hipertensivă cu insuficiență',
+    'I20.0' => 'Angină pectorală instabilă',
+    'I20.9' => 'Angină pectorală stabilă',
+    'I21.9' => 'Infarct miocardic acut',
+    'I25.1' => 'Boală cardiacă aterosclerotică',
+    'I48.0' => 'Fibrilație atrială paroxistică',
+    'I48.9' => 'Fibrilație atrială',
+    'I50.0' => 'Insuficiență cardiacă congestivă',
+    'I50.9' => 'Insuficiență cardiacă, nespecificată',
+    'I42.0' => 'Cardiomiopatie dilatativă',
+    'I44.1' => 'Bloc atrioventricular grad II',
+    'I47.1' => 'Tahicardie supraventriculară',
+    'I47.2' => 'Tahicardie ventriculară',
+    'I49.9' => 'Aritmie cardiacă, nespecificată',
+    'E11.9' => 'Diabet zaharat tip 2, fără complicații',
+    'E11.6' => 'Diabet zaharat tip 2 cu complicații',
+    'E78.5' => 'Hiperlipidemie',
+    'J44.1' => 'BPOC cu exacerbare acută',
+    'J44.9' => 'BPOC, nespecificată',
+    'M81.0' => 'Osteoporoză postmenopauză',
+    'N18.3' => 'Boală renală cronică stadiul 3',
+    'F32.9' => 'Episod depresiv',
+    'F41.1' => 'Anxietate generalizată',
+    'Z95.1' => 'Status post bypass aortocoronarian',
+    'Z95.5' => 'Status post angioplastie cu stent',
+];
+
+// Încarcă datele pacientului pentru sumar + alergii
+$pacientSelectat = $idPacientPreset ? PacientRepo::findById($idPacientPreset) : null;
 ?>
 
 <div class="page-header">
@@ -62,6 +90,23 @@ $icdCodes = $GLOBALS['MOCK_ICD10'] ?? [];
         <h1>Adaugă consultație</h1>
     </div>
 </div>
+
+<?php if ($pacientSelectat): ?>
+    <div class="card mb-4" style="border-left: 4px solid var(--primary);">
+        <div class="card-body">
+            <strong>Pacient:</strong> <?= e(PacientRepo::fullName($pacientSelectat)) ?> · 
+            <strong>CNP:</strong> <?= e($pacientSelectat['cnp'] ?? $pacientSelectat['CNP'] ?? '') ?> · 
+            <strong>Vârstă:</strong> <?= e($pacientSelectat['varsta']) ?> ani · 
+            <strong>Sex:</strong> <?= e($pacientSelectat['sex'] ?? '-') ?>
+        </div>
+    </div>
+    
+    <?php if (!empty($pacientSelectat['alergii'])): ?>
+        <div class="flash flash-error" style="border-left: 4px solid #dc3545;">
+            <strong>Alergii cunoscute:</strong> <?= e($pacientSelectat['alergii']) ?>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
 
 <form method="POST" action="" autocomplete="off">
     <input type="hidden" name="<?= CSRF_TOKEN_NAME ?>" value="<?= csrfToken() ?>">
@@ -78,7 +123,7 @@ $icdCodes = $GLOBALS['MOCK_ICD10'] ?? [];
                             $selected = ($idPacientPreset == $p['id'] || old('id_pacient') == $p['id']);
                         ?>
                             <option value="<?= e($p['id']) ?>" <?= $selected ? 'selected' : '' ?>>
-                                <?= e(PacientRepo::fullName($p)) ?> (CNP: <?= e($p['cnp']) ?>)
+                                <?= e(PacientRepo::fullName($p)) ?> (CNP: <?= e($p['cnp'] ?? $p['CNP'] ?? '') ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -149,7 +194,7 @@ $icdCodes = $GLOBALS['MOCK_ICD10'] ?? [];
     </div>
     
     <div class="form-actions">
-        <button type="submit" class="btn btn-primary btn-lg">💾 Salvează consultația</button>
+        <button type="submit" class="btn btn-primary btn-lg">Salvează consultația</button>
         <a href="<?= url('consultatii.php') ?>" class="btn">Renunță</a>
     </div>
 </form>
