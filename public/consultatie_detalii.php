@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/app/config.php';
+require_once __DIR__ . '/app/guards.php';
 requireLogin();
 
 $idConsultatie = (int)($_GET['id'] ?? 0);

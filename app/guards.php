@@ -28,14 +28,13 @@ function requireLogin() {
 
     $uri = $_SERVER['REQUEST_URI'] ?? '';
 
-    // EXCLUDE static files
+    // IGNORĂ asset-uri
     if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico)$/', $uri)) {
         return;
     }
 
     if (!isLoggedIn()) {
-        flash('warning', 'Trebuie să fii autentificat pentru a accesa această pagină.');
-        $_SESSION['_redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? null;
+        $_SESSION['_redirect_after_login'] = $_SERVER['REQUEST_URI'];
         redirect(url('login.php'));
     }
 }

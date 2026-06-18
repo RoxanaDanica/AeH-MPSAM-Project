@@ -39,7 +39,7 @@ define('ASSETS_URL', '/assets');
 require_once APP_PATH . '/db.php';
 require_once APP_PATH . '/helpers.php';
 require_once APP_PATH . '/auth.php';
-require_once APP_PATH . '/guards.php';
+// require_once APP_PATH . '/guards.php';
 require_once APP_PATH . '/audit.php';
 require_once APP_PATH . '/layout.php';
 require_once APP_PATH . '/mailer.php';
