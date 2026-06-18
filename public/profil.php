@@ -1,8 +1,6 @@
 <?php
-// require_once dirname(__DIR__) . '/app/config.php';
-// require_once dirname( __DIR__ ) . '/app/guards.php';
-require_once BASE_PATH . '/app/config.php';
-require_once BASE_PATH . '/app/guards.php';
+require_once dirname(__DIR__) . '/app/config.php';
+require_once dirname( __DIR__ ) . '/app/guards.php';
 requireLogin();
 
 $user = currentUser();

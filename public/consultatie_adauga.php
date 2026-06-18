@@ -1,8 +1,7 @@
 <?php
-// require_once __DIR__ . '/app/config.php';
-// require_once __DIR__ . '/app/guards.php';
-require_once BASE_PATH . '/app/config.php';
-require_once BASE_PATH . '/app/guards.php';
+require_once __DIR__ . '/app/config.php';
+require_once __DIR__ . '/app/guards.php';
+
 requireRole('medic');
 
 $idMedic = currentMedicId();
